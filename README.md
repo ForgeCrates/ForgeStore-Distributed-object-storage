@@ -2,6 +2,9 @@
 
 A distributed, S3-compatible object storage system written in Rust — built for high-throughput, erasure-coded, horizontally scalable storage with strong metadata consistency via Raft.
 
+<p align="center">
+<img width="154" height="154" alt="image" src="https://github.com/user-attachments/assets/e92725c1-f5c2-4ed1-a0d2-9e128ebbe0fc" />
+</p>
 
 
 <p align="center">
