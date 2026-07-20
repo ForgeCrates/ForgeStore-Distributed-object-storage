@@ -7,4 +7,5 @@ can give custom role by manually controlling policies
 sts/ Issue, validate, and revoke temporary security credentials and session tokens.
 
 
-at gateway request would be canonicalized->can req hashed with sha256
+use access key and secret key with HMAC for authentication
+adn roles and policies for authorization
