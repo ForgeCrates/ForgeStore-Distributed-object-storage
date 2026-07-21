@@ -1,0 +1,24 @@
+services:
+  metadata1:
+    build: .
+    command: cargo run -p metadata -- --config configs/meta1.toml
+
+  metadata2:
+    build: .
+    command: cargo run -p metadata -- --config configs/meta2.toml
+
+  metadata3:
+    build: .
+    command: cargo run -p metadata -- --config configs/meta3.toml
+
+  storage1:
+    build: .
+    command: cargo run -p storage-node -- --config configs/storage1.toml
+
+  storage2:
+    build: .
+    command: cargo run -p storage-node -- --config configs/storage2.toml
+
+  gateway:
+    build: .
+    command: cargo run -p gateway -- --config configs/gateway.toml
