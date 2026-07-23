@@ -1,5 +1,13 @@
 use crate::storage_engine::MetadataDB;
+use rocksdb::WriteBatch;
 
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct BucketMetadata {
+    pub bucket_id: String,
+    pub owner_id: String,
+    pub bucket_name: String,
+    pub created_at: String,
+}
 
 
 // ├── RocksDB
@@ -40,7 +48,7 @@ pub fn create_bucket_metadata(
             created_at: created_at.to_string(),
         })?,
     );
-    batch.put(format!("BUCKET_NAME:{}:{}", user_id, bucket_name), bucket_id);
+    batch.put(format!("BUCKET_NAME:{}:{}", user_id, bucket_name), &bucket_id);
     batch.put(
         format!("UBKT:{}:{}", user_id, bucket_id),
         b"1",
@@ -136,10 +144,10 @@ pub fn get_user_buckets(
     db: &MetadataDB,
     user_id: &str,
 ) -> Result<Vec<BucketMetadata>, anyhow::Error> {
-    let db = db.inner();
+    let inner_db = db.inner();
     let prefix = format!("UBKT:{}:", user_id);
     let mut buckets = Vec::new();
-    for item in db.prefix_iterator(prefix.as_bytes()) {
+    for item in inner_db.prefix_iterator(prefix.as_bytes()) {
         let (key, _) = item?;
         let key_str = String::from_utf8(key.to_vec())?;
         let parts: Vec<&str> = key_str.split(':').collect();
@@ -167,10 +175,10 @@ pub fn get_buckets_shared_with_user(
     db: &MetadataDB,
     user_id: &str,
 ) -> Result<Vec<BucketMetadata>, anyhow::Error> {
-    let db = db.inner();
+    let inner_db = db.inner();
     let prefix = format!("USERROLE:{}:", user_id);
     let mut buckets = Vec::new();
-    for item in db.prefix_iterator(prefix.as_bytes()) {
+    for item in inner_db.prefix_iterator(prefix.as_bytes()) {
         let (key, _) = item?;
         let key_str = String::from_utf8(key.to_vec())?;
         let parts: Vec<&str> = key_str.split(':').collect();

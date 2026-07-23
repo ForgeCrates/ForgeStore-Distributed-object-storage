@@ -43,5 +43,5 @@ service MetadataService {
     rpc createBucket (CreateBucketRequest) returns (CreateBucketResponse) {}
     rpc getBucket (GetBucketRequest) returns (GetBucketResponse) {}
     rpc deleteBucket (DeleteBucketRequest) returns (DeleteBucketResponse) {}
-    rpc createObject(CreateObjectRequest) returns (CreateObjectResponse) {}
+//    rpc createObject(CreateObjectRequest) returns (CreateObjectResponse) {}
 }
