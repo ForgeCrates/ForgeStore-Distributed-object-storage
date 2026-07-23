@@ -39,9 +39,24 @@ message CreateObjectRequest {
 message CreateObjectResponse {
 }
 
+// RAFT INTER-NODE COMMUNICATION
+message RaftMessage {
+    bytes data = 1;
+}
+
+message RaftResponse {
+    bool success = 1;
+    string error = 2;
+}
+
+// Public-facing metadata service (clients call this)
 service MetadataService {
     rpc createBucket (CreateBucketRequest) returns (CreateBucketResponse) {}
     rpc getBucket (GetBucketRequest) returns (GetBucketResponse) {}
     rpc deleteBucket (DeleteBucketRequest) returns (DeleteBucketResponse) {}
-//    rpc createObject(CreateObjectRequest) returns (CreateObjectResponse) {}
+}
+
+// Internal Raft service (metadata nodes call each other)
+service RaftService {
+    rpc Step (RaftMessage) returns (RaftResponse) {}
 }

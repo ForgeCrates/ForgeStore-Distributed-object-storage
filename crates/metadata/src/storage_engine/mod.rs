@@ -1,7 +1,9 @@
+use std::sync::Arc;
 use rocksdb::{DB, Options};
 
+#[derive(Clone)]
 pub struct MetadataDB {
-    db: DB,
+    db: Arc<DB>,
 }
 
 impl MetadataDB {
@@ -11,7 +13,7 @@ impl MetadataDB {
 
         let db = DB::open(&opts, path)?;
 
-        Ok(Self { db })
+        Ok(Self { db: Arc::new(db) })
     }
 
     pub fn inner(&self) -> &DB {
