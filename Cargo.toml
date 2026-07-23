@@ -1,16 +1,16 @@
 [workspace]
 resolver = "3"
 members = [
-    "crates/gateway",
+    # "crates/gateway",
     "crates/metadata",
-    "crates/storage-node",
-    "crates/cluster-manager",
-    "crates/rebalancer",
-    "crates/scrubber",
-    "crates/garbage-collector",
-    "crates/common",
+    # "crates/storage-node",
+    # "crates/cluster-manager",
+    # "crates/rebalancer",
+    # "crates/scrubber",
+    # "crates/garbage-collector",
+    # "crates/common",
     "crates/protocol",
-    "crates/placement",
-    "crates/replication",
-    "crates/iam",
+    # "crates/placement",
+    # "crates/replication",
+    # "crates/iam",
 ]

@@ -1,0 +1,47 @@
+syntax="proto3";
+package metadata;
+
+// BUCKET STRUCTS
+message CreateBucketRequest {
+    string user_id = 1;
+    string bucket_name = 2;
+}
+
+message CreateBucketResponse {
+    string success_message = 1;
+    string error_message = 2;
+}
+
+message GetBucketRequest {
+    string user_id = 1;
+    string bucket_name = 2;
+}
+
+message GetBucketResponse {
+    string success_message = 1;
+    string error_message = 2;
+}
+
+message DeleteBucketRequest {
+    string user_id = 1;
+    string bucket_name = 2;
+}
+
+message DeleteBucketResponse {
+    string success_message = 1;
+    string error_message = 2;
+}
+
+// OBJECT STRUCTS
+message CreateObjectRequest {
+}
+
+message CreateObjectResponse {
+}
+
+service MetadataService {
+    rpc createBucket (CreateBucketRequest) returns (CreateBucketResponse) {}
+    rpc getBucket (GetBucketRequest) returns (GetBucketResponse) {}
+    rpc deleteBucket (DeleteBucketRequest) returns (DeleteBucketResponse) {}
+    rpc createObject(CreateObjectRequest) returns (CreateObjectResponse) {}
+}

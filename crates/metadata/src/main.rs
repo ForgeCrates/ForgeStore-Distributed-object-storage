@@ -1,59 +1,45 @@
-use axum::{
-    routing::{get, post},
-    http::StatusCode,
-    Json, Router,
-};
-use serde::{Deserialize, Serialize};
+// will use grpc here
 
 
-// the input to our `create_user` handler
-#[derive(Deserialize)]
-struct CreateUser {
-    username: String,
+use protocol::metadata::metadata_service_server::{MetadataService, MetadataServiceServer};
+use protocol::metadata::{CreateBucketRequest, CreateBucketResponse /* ... */};
+use tonic::{Request, Response, Status};
+use crate::bucket_metadata::create_bucket_metadata;
+use crate::storage_engine::MetadataDB;
+#[derive(Default)]
+pub struct MyMetadataService {}
+
+#[tonic::async_trait]
+impl MetadataService for MyMetadataService {
+    async fn create_bucket(
+        &self,
+        request: Request<CreateBucketRequest>,
+    ) -> Result<Response<CreateBucketResponse>, Status> {
+        // Your logic here!
+        let response: Result<(), anyhow::Error> = create_bucket_metadata(
+            &MetadataDB::new(),
+            &request.into_inner().user_id,
+            &request.into_inner().bucket_name,
+        )?;
+        let error_message = match response {
+            Ok(_) => "".to_string(),
+            Err(e) => e.to_string(),
+        };
+
+        let reply = CreateBucketResponse {
+            success_message: format!("Created bucket {}", request.into_inner().bucket_name),
+            error_message: error_message,
+        };
+        Ok(Response::new(reply))
+    }
+    
+    // ... implement get_bucket, delete_bucket, create_object
 }
 
-// the output to our `create_user` handler
-#[derive(Serialize)]
-struct User {
-    id: u64,
-    username: String,
-}
-
-
-#[tokio::main]
-async fn main() {
-    // initialize tracing
-    tracing_subscriber::fmt::init();
-
-    // build our application with a route
-    let app = Router::new()
-        // `GET /` goes to `root`
-        .route("/", get(root))
-        // `POST /users` goes to `create_user`
-        .route("/users", post(create_user));
-
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
-}
-
-// basic handler that responds with a static string
-async fn root() -> &'static str {
-    "Hello, World!"
-}
-
-async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
-    Json(payload): Json<CreateUser>,
-) -> (StatusCode, Json<User>) {
-    // insert your application logic here
-    let user = User {
-        id: 1337,
-        username: payload.username,
-    };
-
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
-    (StatusCode::CREATED, Json(user))
-}
+// To run the server:
+let addr = "[::1]:50051".parse().unwrap();
+let service = MyMetadataService::default();
+tonic::transport::Server::builder()
+    .add_service(MetadataServiceServer::new(service))
+    .serve(addr)
+    .await?;
